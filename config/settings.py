@@ -1,10 +1,14 @@
 from pathlib import Path
 import os
+from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("T2hslzEkCDyt_8hauiv5YzGj2YlOJIARK2DkUXDgfuYy1fWaZrKPmxOud4KyihSwzzc")
+SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-please-change-in-production"
+
+# WARNING: the fallback SECRET_KEY above is insecure for production.
+# Set the environment variable SECRET_KEY in production deployments.
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = []
