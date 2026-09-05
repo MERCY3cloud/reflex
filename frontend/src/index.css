@@ -1,0 +1,31 @@
+body {
+margin: 0;
+font-family: Arial, sans-serif;
+}
+
+.login-page {
+min-height: 100vh;
+background: #f5f7fa;
+}
+
+.login-card {
+border-radius: 16px;
+overflow: hidden;
+}
+
+.login-card h1 {
+letter-spacing: -1px;
+}
+
+.form-control {
+border-radius: 8px;
+}
+
+.form-control:focus {
+box-shadow: none;
+}
+
+.btn {
+border-radius: 8px;
+font-weight: 600;
+}

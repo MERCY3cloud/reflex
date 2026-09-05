@@ -1,0 +1,31 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# React / Vite
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# IDE
+.vscode/
+.idea/
+"@ | Set-Content .gitignore
