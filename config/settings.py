@@ -11,7 +11,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-please-change-in-produc
 # Set the environment variable SECRET_KEY in production deployments.
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "reflex-h52m.onrender.com",
+]
 
 
 # Application definition
