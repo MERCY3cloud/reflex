@@ -93,25 +93,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-# Allow additional CORS origins through Render environment variables
-extra_cors = os.environ.get("EXTRA_CORS_ALLOWED_ORIGINS", "")
-
-if extra_cors:
-    for origin in [
-        x.strip()
-        for x in extra_cors.split(",")
-        if x.strip()
-    ]:
-        if origin not in CORS_ALLOWED_ORIGINS:
-            CORS_ALLOWED_ORIGINS.append(origin)
-
-        if (
-            origin not in CSRF_TRUSTED_ORIGINS
-            and origin.startswith("https://")
-        ):
-            CSRF_TRUSTED_ORIGINS.append(origin)
-
-
 # =========================
 # URL / TEMPLATES
 # =========================
