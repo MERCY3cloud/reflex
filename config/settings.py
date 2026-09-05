@@ -85,13 +85,13 @@ CORS_ALLOWED_ORIGINS = [
 
     "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
     "https://reflex-lqsug6nq7-mercy-akiri-s-projects.vercel.app",
+    "https://reflex-hazel.vercel.app",
 ]
-
 CSRF_TRUSTED_ORIGINS = [
     "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
     "https://reflex-lqsug6nq7-mercy-akiri-s-projects.vercel.app",
+    "https://reflex-hazel.vercel.app",
 ]
-
 
 # =========================
 # URL / TEMPLATES
