@@ -13,6 +13,8 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
     "reflex-h52m.onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
 
@@ -133,7 +135,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
+# Allow both local dev Vite origins and deployed frontend origin
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
     "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
 ]
 CSRF_TRUSTED_ORIGINS = [
