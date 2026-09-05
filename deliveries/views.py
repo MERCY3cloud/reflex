@@ -176,6 +176,28 @@ class AssignRiderView(APIView):
         )
 
         return Response({"message": "Rider assigned successfully.", "delivery": {"id": delivery.id, "status": delivery.status, "rider": rider.username, "customer_name": delivery.customer_name, "address": delivery.address}}, status=status.HTTP_200_OK)
+
+
+class RidersListView(APIView):
+    """Return list of active users with role RIDER. Only accessible by DISPATCHER."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if getattr(request.user, "role", None) != "DISPATCHER":
+            return Response({"error": "Only dispatchers can view riders."}, status=status.HTTP_403_FORBIDDEN)
+
+        riders_qs = User.objects.filter(role=User.Role.RIDER)
+        data = [
+            {
+                "id": r.id,
+                "username": r.username,
+                "first_name": r.first_name,
+                "last_name": r.last_name,
+            }
+            for r in riders_qs
+        ]
+
+        return Response({"riders": data}, status=status.HTTP_200_OK)
 class MyDeliveriesView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -6,6 +6,7 @@ DeliveryListView,
 PendingDeliveriesView,
 VerifyLocationView,
 AssignRiderView,
+RidersListView,
 MyDeliveriesView,
 UpdateDeliveryStatusView,
 DeliveryDetailView,
@@ -23,6 +24,12 @@ path(
     "pending/",
     PendingDeliveriesView.as_view(),
     name="pending-deliveries",
+),
+
+path(
+    "riders/",
+    RidersListView.as_view(),
+    name="riders-list",
 ),
 
 path(

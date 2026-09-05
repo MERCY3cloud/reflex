@@ -11,9 +11,13 @@ function DispatcherDeliveryDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedRider, setSelectedRider] = useState("");
+    const [riders, setRiders] = useState([]);
+    const [ridersLoading, setRidersLoading] = useState(true);
+    const [ridersError, setRidersError] = useState("");
 
     useEffect(() => {
         fetchDetail();
+        fetchRiders();
     }, [id]);
 
     const fetchDetail = async () => {
@@ -33,6 +37,20 @@ function DispatcherDeliveryDetail() {
             setError("Failed to load delivery details.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchRiders = async () => {
+        setRidersLoading(true);
+        setRidersError("");
+        try {
+            const res = await api.get(`/deliveries/riders/`);
+            setRiders(res.data.riders || []);
+        } catch (err) {
+            console.error("Failed to load riders:", err);
+            setRidersError("Unable to load riders.");
+        } finally {
+            setRidersLoading(false);
         }
     };
 
@@ -111,12 +129,25 @@ function DispatcherDeliveryDetail() {
 
                 {delivery.status === "LOCATION_VERIFIED" && (
                     <>
-                        <select className="form-select d-inline-block w-auto me-2" value={selectedRider} onChange={(e) => setSelectedRider(e.target.value)}>
-                            <option value="">Select rider</option>
-                            {delivery.available_riders.map((r) => (
-                                <option key={r.id} value={r.id}>{r.username}</option>
-                            ))}
-                        </select>
+                        {ridersLoading ? (
+                            <span className="me-2">Loading riders...</span>
+                        ) : ridersError ? (
+                            <span className="text-danger me-2">{ridersError}</span>
+                        ) : (
+                            <select className="form-select d-inline-block w-auto me-2" value={selectedRider} onChange={(e) => setSelectedRider(e.target.value)}>
+                                <option value="">Select rider</option>
+                                {riders.length > 0 ? (
+                                    riders.map((r) => (
+                                        <option key={r.id} value={r.id}>{(r.first_name || r.last_name) ? `${r.first_name} ${r.last_name}`.trim() : r.username}</option>
+                                    ))
+                                ) : (
+                                    // fall back to delivery.available_riders if present
+                                    delivery.available_riders?.map((r) => (
+                                        <option key={r.id} value={r.id}>{r.username}</option>
+                                    ))
+                                )}
+                            </select>
+                        )}
 
                         <button className="btn btn-success" onClick={handleAssign}>Assign Rider</button>
                     </>
