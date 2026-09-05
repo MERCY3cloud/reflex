@@ -13,6 +13,26 @@ function RiderDashboard() {
 
     useEffect(() => {
         fetchMeAndDeliveries();
+
+        // periodic refresh so newly assigned deliveries appear without re-login
+        const intervalId = setInterval(() => {
+            fetchDeliveries();
+        }, 10000);
+
+        // refresh when tab becomes visible again or window gains focus
+        const handleVisibility = () => {
+            if (document.visibilityState === 'visible') fetchDeliveries();
+        };
+        const handleFocus = () => fetchDeliveries();
+
+        document.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            clearInterval(intervalId);
+            document.removeEventListener('visibilitychange', handleVisibility);
+            window.removeEventListener('focus', handleFocus);
+        };
     }, []);
 
     const fetchMeAndDeliveries = async () => {
