@@ -1,14 +1,19 @@
 from pathlib import Path
 import os
-from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-please-change-in-production"
 
-# WARNING: the fallback SECRET_KEY above is insecure for production.
-# Set the environment variable SECRET_KEY in production deployments.
+# =========================
+# SECURITY
+# =========================
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "dev-secret-please-change-in-production"
+)
+
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
@@ -18,10 +23,13 @@ ALLOWED_HOSTS = [
 ]
 
 
-# Application definition
+# =========================
+# APPLICATIONS
+# =========================
 
 INSTALLED_APPS = [
     "corsheaders",
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,11 +45,21 @@ INSTALLED_APPS = [
     "tracking",
 ]
 
+
+# =========================
+# REST FRAMEWORK
+# =========================
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
+
+
+# =========================
+# MIDDLEWARE
+# =========================
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -54,95 +72,152 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# CORS settings - allow frontend dev server origins
-# Install django-cors-headers if missing: pip install django-cors-headers
+
+# =========================
+# CORS
+# =========================
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:5174",
     "http://127.0.0.1:5174",
+
+    "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
+    "https://reflex-lqsug6nq7-mercy-akiri-s-projects.vercel.app",
 ]
 
-ROOT_URLCONF = 'config.urls'
+CSRF_TRUSTED_ORIGINS = [
+    "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
+    "https://reflex-lqsug6nq7-mercy-akiri-s-projects.vercel.app",
+]
+
+
+# Allow additional CORS origins through Render environment variables
+extra_cors = os.environ.get("EXTRA_CORS_ALLOWED_ORIGINS", "")
+
+if extra_cors:
+    for origin in [
+        x.strip()
+        for x in extra_cors.split(",")
+        if x.strip()
+    ]:
+        if origin not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(origin)
+
+        if (
+            origin not in CSRF_TRUSTED_ORIGINS
+            and origin.startswith("https://")
+        ):
+            CSRF_TRUSTED_ORIGINS.append(origin)
+
+
+# =========================
+# URL / TEMPLATES
+# =========================
+
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# =========================
+# DATABASE
+# =========================
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
-    )
-}
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL")
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# =========================
+# PASSWORD VALIDATION
+# =========================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# =========================
+# INTERNATIONALIZATION
+# =========================
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# =========================
+# STATIC FILES
+# =========================
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'users.User'
-# Allow both local dev Vite origins and deployed frontend origin
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "https://reflex-bcm00mntm-mercy-akiri-s-projects.vercel.app",
-]
+# =========================
+# DEFAULT PRIMARY KEY
+# =========================
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# =========================
+# CUSTOM USER
+# =========================
+
+AUTH_USER_MODEL = "users.User"
